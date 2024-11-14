@@ -199,33 +199,34 @@ namespace SearchEngine
         static void SearchStudent(string studentSearch, List<Subject> subjects)
         {
             bool found = false;
+            studentSearch = studentSearch.ToLower(); // Convert search input to lowercase for case-insensitive comparison
+
             foreach (var subject in subjects)
             {
-                foreach (var student in subject.Students)
+                // Sort students alphabetically by name
+                var sortedStudents = subject.Students.OrderBy(s => s.Name).ToList();
+
+                // Check if any student in this subject matches the search term
+                var hasMatchingStudent = sortedStudents.Any(student => student.Name.ToLower().Contains(studentSearch));
+
+                if (hasMatchingStudent)
                 {
-                    if (student.Name.Contains(studentSearch))
+
+                    Console.WriteLine($"Found in subject: {subject.SubjectName} with Teacher: {subject.Teacher}");
+                    // Display sorted list of students, marking those under 20 in red
+                    foreach (var student in sortedStudents)
                     {
-                        // Sort the students alphabetically by name
-                        var sortedSubjects = subject.Students.OrderBy(s => s.Name).ToList();
-
-                        foreach (var sortedStudent in sortedSubjects)
+                        if (student.Age < 20)
                         {
-                            // Check if age is under 20
-                            if (sortedStudent.Age < 20)
-                            {
-                                Console.ForegroundColor = ConsoleColor.Red; // Set text color to red
-                                Console.WriteLine($"Student: {sortedStudent.Name} (Age: {sortedStudent.Age}) is enrolled in subject: {subject.SubjectName} with Teacher: {subject.Teacher}");
-                                Console.ResetColor(); // Reset color after displaying the student info
-                            }
-                            else
-                            {
-                                // Print other students normally
-                                Console.WriteLine($"Student: {sortedStudent.Name} (Age: {sortedStudent.Age}) is enrolled in subject: {subject.SubjectName} with Teacher: {subject.Teacher}");
-                            }
+                            Console.ForegroundColor = ConsoleColor.Red;
                         }
-
-                        found = true;
+                        Console.WriteLine($"- {student.Name} (Age: {student.Age})");
+                        Console.ResetColor();
+                        
+                        
                     }
+
+                    found = true;
                 }
             }
 
@@ -234,6 +235,9 @@ namespace SearchEngine
                 Console.WriteLine("No students found matching your search.");
             }
         }
+
+
+
 
     }
 }
