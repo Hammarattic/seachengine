@@ -9,7 +9,7 @@ namespace SearchEngine
     {
         static void Main(string[] args)
         {
-            int studentcount=0;
+            int studentcount = 0;
             bool running = true;
 
             Console.WriteLine("Welcome to the search engine for tech");
@@ -139,14 +139,17 @@ namespace SearchEngine
                     Console.WriteLine($"Subject: {subject.SubjectName}, Teacher: {subject.Teacher}");
                     Console.WriteLine("Enrolled Students:");
 
-                    foreach (var student in subject.Students)
+                    // Sort students alphabetically by name
+                    var sortedStudents = subject.Students.OrderBy(s => s.Name).ToList();
+
+                    foreach (var student in sortedStudents)
                     {
                         // Check if student's age is under 20
                         if (student.Age < 20)
                         {
                             Console.ForegroundColor = ConsoleColor.Red; // Set text color to red
                             Console.WriteLine($"- {student.Name} (Age: {student.Age})");
-                            Console.ResetColor(); // Reset color after the student information
+                            Console.ResetColor(); // Reset color after displaying the student info
                         }
                         else
                         {
@@ -164,6 +167,7 @@ namespace SearchEngine
                 Console.WriteLine("No subjects found matching your search.");
             }
         }
+
 
 
         static void SearchTeacher(string teacherSearch, List<Subject> subjects)
@@ -193,34 +197,43 @@ namespace SearchEngine
 
 
         static void SearchStudent(string studentSearch, List<Subject> subjects)
-{
-    bool found = false;
-    // Trim any leading or trailing whitespace from the search string
-    studentSearch = studentSearch.Trim();
-
-    foreach (var subject in subjects)
-    {
-        foreach (var student in subject.Students)
         {
-            // Perform a case-insensitive search
-            if (student.Name.Contains(studentSearch))
+            bool found = false;
+            foreach (var subject in subjects)
             {
-                        if (student.Age < 20)
-                        {
-                            Console.ForegroundColor = ConsoleColor.Red;
-                        }
-                Console.WriteLine($"Student: {student.Name} (Age: {student.Age}) is enrolled in subject: {subject.SubjectName} with Teacher: {subject.Teacher}");
+                foreach (var student in subject.Students)
+                {
+                    if (student.Name.Contains(studentSearch))
+                    {
+                        // Sort the students alphabetically by name
+                        var sortedSubjects = subject.Students.OrderBy(s => s.Name).ToList();
 
-                        Console.ResetColor();
+                        foreach (var sortedStudent in sortedSubjects)
+                        {
+                            // Check if age is under 20
+                            if (sortedStudent.Age < 20)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red; // Set text color to red
+                                Console.WriteLine($"Student: {sortedStudent.Name} (Age: {sortedStudent.Age}) is enrolled in subject: {subject.SubjectName} with Teacher: {subject.Teacher}");
+                                Console.ResetColor(); // Reset color after displaying the student info
+                            }
+                            else
+                            {
+                                // Print other students normally
+                                Console.WriteLine($"Student: {sortedStudent.Name} (Age: {sortedStudent.Age}) is enrolled in subject: {subject.SubjectName} with Teacher: {subject.Teacher}");
+                            }
+                        }
+
                         found = true;
+                    }
+                }
+            }
+
+            if (!found)
+            {
+                Console.WriteLine("No students found matching your search.");
             }
         }
-    }
 
-    if (!found)
-    {
-        Console.WriteLine("No students found matching your search.");
-    }
-}
     }
 }
